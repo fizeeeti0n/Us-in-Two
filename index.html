@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Our Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400&family=Hind+Siliguri:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0608;
+    --card: #1a1217;
+    --border: rgba(180,100,120,0.18);
+    --rose: #c4748a;
+    --rose-light: #e8a0b0;
+    --rose-dim: rgba(196,116,138,0.12);
+    --gold: #c9a96e;
+    --text: #f0e8ec;
+    --muted: rgba(240,232,236,0.45);
+    --hint: rgba(240,232,236,0.22);
+    --green: #6abf8a;
+    --green-dim: rgba(106,191,138,0.1);
+    --blue: #90c0f0;
+    --blue-dim: rgba(100,160,240,0.08);
+    --amber-dim: rgba(200,150,80,0.08);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-bangla: 'Hind Siliguri', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; top: -30%; left: -20%; width: 60%; height: 60%;
+    background: radial-gradient(ellipse, rgba(180,60,90,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: ''; position: fixed; bottom: -20%; right: -20%; width: 50%; height: 50%;
+    background: radial-gradient(ellipse, rgba(120,60,180,0.05) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  header { padding: 64px 0 48px; text-align: center; }
+  .header-ornament {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin-bottom: 20px; opacity: 0.5;
+  }
+  .header-ornament span { display: block; width: 40px; height: 0.5px; background: var(--rose); }
+  h1 { font-family: var(--font-display); font-size: clamp(2.2rem,6vw,3rem); font-weight: 300; letter-spacing: 0.04em; line-height: 1.2; }
+  h1 em { color: var(--rose-light); font-style: italic; }
+  .subtitle { margin-top: 10px; font-size: 13px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .card {
+    background: var(--card); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 36px 40px; margin-bottom: 24px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent); opacity: 0.35;
+  }
+  .card.gold-line::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.28; }
+
+  .card-title {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rose); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .card-title::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+  /* Settings toggle */
+  .settings-toggle {
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none;
+  }
+  .settings-toggle .s-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--rose); }
+  .settings-toggle .s-arrow { margin-left: auto; color: var(--muted); font-size: 11px; transition: transform 0.25s; }
+  .settings-toggle.open .s-arrow { transform: rotate(180deg); }
+  .settings-toggle::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+  .settings-body { overflow: hidden; max-height: 0; transition: max-height 0.45s ease, margin-top 0.3s; }
+  .settings-body.open { max-height: 700px; margin-top: 22px; }
+
+  /* Provider tabs */
+  .provider-tabs { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 22px; }
+  .ptab {
+    background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.07);
+    border-radius: 10px; color: var(--muted); cursor: pointer;
+    font-family: var(--font-body); font-size: 12px; font-weight: 400;
+    letter-spacing: 0.05em; padding: 10px 6px; text-align: center;
+    transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .ptab .ptab-icon { font-size: 15px; }
+  .ptab:hover { border-color: var(--border); color: var(--text); }
+  .ptab.active[data-provider="claude"]  { border-color: var(--rose); background: var(--rose-dim); color: var(--rose-light); }
+  .ptab.active[data-provider="openai"] { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+  .ptab.active[data-provider="grok"]   { border-color: rgba(100,160,240,0.5); background: var(--blue-dim); color: var(--blue); }
+  .ptab.active[data-provider="gemini"] { border-color: rgba(200,150,80,0.5); background: var(--amber-dim); color: var(--gold); }
+
+  .provider-panel { display: none; }
+  .provider-panel.active { display: block; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+
+  label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rose); font-weight: 400; }
+
+  input, select, textarea {
+    background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.09);
+    border-radius: 10px; color: var(--text); font-family: var(--font-body);
+    font-size: 14px; font-weight: 300; padding: 11px 15px; outline: none;
+    transition: border-color 0.2s, background 0.2s; width: 100%; -webkit-appearance: none;
+  }
+  input::placeholder, textarea::placeholder { color: var(--hint); }
+  input:focus, select:focus, textarea:focus { border-color: rgba(196,116,138,0.4); background: rgba(196,116,138,0.04); }
+  select option { background: #1a1217; }
+  textarea { resize: none; height: 78px; line-height: 1.6; }
+
+  .key-wrap { position: relative; }
+  .key-wrap input { padding-right: 44px; font-family: monospace; font-size: 13px; }
+  .eye-btn {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; line-height: 0; transition: color 0.15s;
+  }
+  .eye-btn:hover { color: var(--text); }
+
+  .key-status {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 6px;
+  }
+  .key-status.ok   { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(106,191,138,0.25); }
+  .key-status.none { background: var(--amber-dim); color: var(--gold); border: 0.5px solid rgba(200,150,80,0.2); }
+  .key-status .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  .model-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 14px; }
+  .model-custom { display: none; }
+  .model-custom.show { display: block; margin-top: 10px; }
+
+  .info-note {
+    font-size: 12px; color: var(--muted); padding: 10px 14px; border-radius: 8px;
+    border: 0.5px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);
+    margin-top: 14px; line-height: 1.6;
+  }
+  .info-note code {
+    font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.07);
+    padding: 1px 5px; border-radius: 4px; color: var(--gold);
+  }
+
+  .mood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .mood-btn {
+    background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 10px; color: var(--muted); cursor: pointer; font-family: var(--font-body);
+    font-size: 12px; letter-spacing: 0.04em; padding: 12px 8px; text-align: center;
+    transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .mood-btn .icon { font-size: 17px; }
+  .mood-btn:hover { border-color: var(--border); color: var(--text); }
+  .mood-btn.active { border-color: var(--rose); background: var(--rose-dim); color: var(--rose-light); }
+
+  .btn-generate {
+    width: 100%; background: linear-gradient(135deg, rgba(180,60,90,0.25), rgba(140,40,80,0.15));
+    border: 0.5px solid rgba(196,116,138,0.35); border-radius: 12px; color: var(--rose-light);
+    cursor: pointer; font-family: var(--font-display); font-size: 1.1rem; font-weight: 400;
+    letter-spacing: 0.08em; padding: 16px 32px; transition: all 0.25s; margin-top: 24px;
+    position: relative; overflow: hidden;
+  }
+  .btn-generate::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(196,116,138,0.1), transparent);
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .btn-generate:hover::before { opacity: 1; }
+  .btn-generate:hover { border-color: rgba(196,116,138,0.6); transform: translateY(-1px); }
+  .btn-generate:active { transform: translateY(0); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .story-card {
+    background: var(--card); border: 0.5px solid var(--border); border-radius: 20px;
+    padding: 44px 48px; position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .story-card.visible { opacity: 1; transform: translateY(0); }
+  .story-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.35;
+  }
+  .story-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent); opacity: 0.2;
+  }
+
+  .story-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+  .meta-tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; border: 0.5px solid; }
+  .meta-tag.city  { border-color: rgba(201,169,110,0.3); color: var(--gold); }
+  .meta-tag.mood  { border-color: rgba(196,116,138,0.3); color: var(--rose-light); }
+  .meta-tag.model { border-color: rgba(255,255,255,0.1); color: var(--muted); font-size: 10px; }
+
+  .story-text { font-family: var(--font-bangla); font-size: 1.08rem; line-height: 2; color: rgba(240,232,236,0.9); font-weight: 300; }
+  .story-text p { margin-bottom: 1.1em; }
+  .story-text p:last-child { margin-bottom: 0; }
+
+  .cursor { display: inline-block; width: 2px; height: 1.1em; background: var(--rose); margin-left: 2px; vertical-align: text-bottom; animation: blink 0.8s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+  .story-divider { display: flex; align-items: center; gap: 16px; margin: 32px 0; }
+  .story-divider span { flex: 1; height: 0.5px; background: var(--border); }
+
+  .loading-dots { display: flex; gap: 6px; align-items: center; justify-content: center; padding: 32px; }
+  .loading-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); opacity: 0.4; animation: pulse 1.2s ease-in-out infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,100%{opacity:0.2;transform:scale(0.8)}50%{opacity:0.9;transform:scale(1)} }
+
+  .error-msg { padding: 14px 18px; border-radius: 10px; border: 0.5px solid rgba(220,80,80,0.3); background: rgba(220,80,80,0.07); color: rgba(240,180,180,0.9); font-size: 13px; margin-top: 14px; }
+
+  footer { padding: 60px 0 40px; text-align: center; color: var(--hint); font-size: 12px; letter-spacing: 0.08em; }
+
+  @media (max-width: 520px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .mood-grid { grid-template-columns: repeat(2,1fr); }
+    .provider-tabs { grid-template-columns: repeat(2,1fr); }
+    .story-card { padding: 28px 22px; }
+    .card { padding: 26px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-ornament">
+      <span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:var(--rose)">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <span></span>
+    </div>
+    <h1>Write <em>Our</em> Story</h1>
+    <p class="subtitle">দুই বছর — একটি মুহূর্তে</p>
+  </header>
+
+
+
+  <!-- Story Form -->
+  <div class="card">
+    <div class="card-title">তোমাদের গল্প</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>শহর</label>
+        <input type="text" id="city" placeholder="যেমন: ঢাকা, টোকিও, ইস্তাম্বুল…"/>
+      </div>
+      <div class="form-group">
+        <label>তার পেশা</label>
+        <input type="text" id="her-career" placeholder="যেমন: ডাক্তার, ডিজাইনার…"/>
+      </div>
+      <div class="form-group">
+        <label>তোমার পেশা</label>
+        <input type="text" id="my-career" placeholder="যেমন: ডেভেলপার, শিক্ষক…"/>
+      </div>
+    </div>
+    <input type="hidden" id="mood-value" value="romantic"/>
+
+    <div style="margin-top:20px;">
+      <label style="display:block;margin-bottom:10px;">মুড</label>
+      <div class="mood-grid">
+        <button class="mood-btn active" data-mood="romantic"><span class="icon">🕯</span>রোমান্টিক</button>
+        <button class="mood-btn" data-mood="rainy"><span class="icon">🌧</span>বৃষ্টির দিন</button>
+        <button class="mood-btn" data-mood="playful"><span class="icon">✦</span>দুষ্টুমি</button>
+        <button class="mood-btn" data-mood="tense"><span class="icon">〜</span>টানটান</button>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;" class="form-group">
+      <label>পরিস্থিতি <span style="opacity:.35;font-size:10px;text-transform:none;letter-spacing:0;">(ঐচ্ছিক)</span></label>
+      <textarea id="situation" placeholder="যেমন: সে তোমার সাথে দেরি করল, ফোন ধরছিল না…"></textarea>
+    </div>
+
+    <button class="btn-generate" id="generate-btn" onclick="generateStory()">আমাদের মুহূর্ত লেখো</button>
+    <div id="error-box" class="error-msg" style="display:none;"></div>
+  </div>
+
+  <!-- Story Output -->
+  <div class="story-card" id="story-card" style="display:none;">
+    <div class="story-meta" id="story-meta"></div>
+    <div id="story-output" class="story-text"></div>
+    <div class="story-divider">
+      <span></span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="color:var(--rose)">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <span></span>
+    </div>
+    <button class="btn-generate" onclick="generateStory()" style="margin-top:0;">আরেকটি মুহূর্ত লেখো</button>
+  </div>
+
+  <footer>নিঃশব্দ আকাঙ্ক্ষায় তৈরি &nbsp;·&nbsp; powered by ai</footer>
+</div>
+
+<script>
+
+// ─────────────────────────────
+// STATE (LOCKED TO GROK)
+// ─────────────────────────────
+let currentProvider = 'grok';
+
+// ─────────────────────────────
+// SAFE INPUT HANDLER (FIX)
+// ─────────────────────────────
+function getInputValue(id, fallback = '') {
+  const el = document.getElementById(id);
+
+  if (!el) return fallback;
+
+  const val = el.value;
+  if (val === null || val === undefined) return fallback;
+
+  return String(val).trim() || fallback;
+}
+
+// alias (so old code doesn't break if reused)
+const safeValue = getInputValue;
+
+// ─────────────────────────────
+// DOM READY HARD LOCK
+// ─────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  selectProvider('grok');
+
+  document.querySelectorAll('.ptab').forEach(btn => {
+    if (btn.dataset.provider !== 'grok') {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+    }
+  });
+});
+
+// ─────────────────────────────
+// UI CONTROL
+// ─────────────────────────────
+function toggleSettings() {
+  document.getElementById('settings-toggle')?.classList.toggle('open');
+  document.getElementById('settings-body')?.classList.toggle('open');
+}
+
+function selectProvider(p) {
+  currentProvider = 'grok';
+
+  document.querySelectorAll('.ptab').forEach(t =>
+    t.classList.toggle('active', t.dataset.provider === 'grok')
+  );
+
+  document.querySelectorAll('.provider-panel').forEach(panel =>
+    panel.classList.toggle('active', panel.id === 'panel-grok')
+  );
+}
+
+function onModelChange() {
+  const val = document.getElementById('model-grok')?.value;
+  document.getElementById('model-grok-custom')?.classList.toggle('show', val === 'custom');
+}
+
+function getModel() {
+  const sel = document.getElementById('model-grok');
+  if (!sel) return 'grok-3-latest';
+
+  return sel.value === 'custom'
+    ? (document.getElementById('model-grok-custom')?.value || '').trim()
+    : sel.value;
+}
+
+// ─────────────────────────────
+// MOOD HANDLER
+// ─────────────────────────────
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const moodEl = document.getElementById('mood-value');
+    if (moodEl) moodEl.value = btn.dataset.mood;
+  });
+});
+
+// ─────────────────────────────
+// API CALL (SAFE + TIMEOUT)
+// ─────────────────────────────
+async function callAI(prompt) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const res = await fetch('/api/grok', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        model: getModel()
+      }),
+      signal: controller.signal
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Grok API error');
+    }
+
+    return data.text;
+
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Request timeout — backend slow or not responding');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+// ─────────────────────────────
+// MAIN FUNCTION (FIXED)
+// ─────────────────────────────
+async function generateStory() {
+
+  const city = getInputValue('city', 'ঢাকা');
+  const herCareer = getInputValue('her-career', 'ডিজাইনার');
+  const myCareer = getInputValue('my-career', 'ডেভেলপার');
+  const mood = getInputValue('mood-value', 'romantic');
+  const situation = getInputValue('situation', '');
+
+  const btn = document.getElementById('generate-btn');
+  const errorBox = document.getElementById('error-box');
+  const card = document.getElementById('story-card');
+  const output = document.getElementById('story-output');
+  const metaEl = document.getElementById('story-meta');
+
+  if (!btn || !output || !card) {
+    console.error('Missing UI elements');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'লেখা হচ্ছে…';
+
+  if (errorBox) errorBox.style.display = 'none';
+
+  card.style.display = 'block';
+  card.classList.remove('visible');
+
+  output.innerHTML = `
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+  `;
+
+  metaEl.innerHTML = '';
+
+  setTimeout(() => card.classList.add('visible'), 10);
+
+  const moodGuide = {
+    romantic: 'উষ্ণ, নরম, বাস্তব সম্পর্কের অনুভূতি',
+    rainy: 'শান্ত, আবেগপূর্ণ, ধীর',
+    playful: 'হালকা খুনসুটি, বাস্তব কৌতুক',
+    tense: 'দূরত্ব + চাপ, কিন্তু সম্পর্ক টিকে আছে'
+  };
+
+  const prompt = `
+তুমি একটি বাস্তবধর্মী বাংলা গল্প লিখবে।
+
+শহর: ${city}
+তার পেশা: ${herCareer}
+আমার পেশা: ${myCareer}
+মুড: ${mood} → ${moodGuide[mood]}
+পরিস্থিতি: ${situation || 'একটা সাধারণ সন্ধ্যা'}
+
+শর্ত:
+- 2–4 অনুচ্ছেদ
+- কোনো শিরোনাম না
+- নাটকীয় নয়, বাস্তব হবে
+- "তুমি" ব্যবহার করবে
+`;
+
+  try {
+    const storyRaw = await callAI(prompt);
+
+    const paragraphs = storyRaw
+      .split(/\n\n+/)
+      .filter(p => p.trim());
+
+    metaEl.innerHTML = `
+      <span class="meta-tag city">${city}</span>
+      <span class="meta-tag mood">${mood}</span>
+      <span class="meta-tag model">Grok · ${getModel()}</span>
+    `;
+
+    output.innerHTML = '';
+
+    await typewriter(output, paragraphs);
+
+  } catch (err) {
+    card.style.display = 'none';
+
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Error: ' + err.message;
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'আমাদের মুহূর্ত লেখো';
+  }
+}
+
+// ─────────────────────────────
+// TYPEWRITER
+// ─────────────────────────────
+async function typewriter(container, paragraphs) {
+  for (const text of paragraphs) {
+    const p = document.createElement('p');
+    container.appendChild(p);
+    await typeText(p, text);
+  }
+}
+
+async function typeText(el, text) {
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  el.appendChild(cursor);
+
+  const words = text.split(/(\s+)/);
+
+  for (const w of words) {
+    cursor.insertAdjacentText('beforebegin', w);
+    await new Promise(r => setTimeout(r, 35));
+  }
+
+  cursor.remove();
+}
+
+</script><script>
+
+// ─────────────────────────────
+// STATE (LOCKED TO GROK)
+// ─────────────────────────────
+let currentProvider = 'grok';
+
+// ─────────────────────────────
+// SAFE INPUT HANDLER (FIX)
+// ─────────────────────────────
+function getInputValue(id, fallback = '') {
+  const el = document.getElementById(id);
+
+  if (!el) return fallback;
+
+  const val = el.value;
+  if (val === null || val === undefined) return fallback;
+
+  return String(val).trim() || fallback;
+}
+
+// alias (so old code doesn't break if reused)
+const safeValue = getInputValue;
+
+// ─────────────────────────────
+// DOM READY HARD LOCK
+// ─────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  selectProvider('grok');
+
+  document.querySelectorAll('.ptab').forEach(btn => {
+    if (btn.dataset.provider !== 'grok') {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+    }
+  });
+});
+
+// ─────────────────────────────
+// UI CONTROL
+// ─────────────────────────────
+function toggleSettings() {
+  document.getElementById('settings-toggle')?.classList.toggle('open');
+  document.getElementById('settings-body')?.classList.toggle('open');
+}
+
+function selectProvider(p) {
+  currentProvider = 'grok';
+
+  document.querySelectorAll('.ptab').forEach(t =>
+    t.classList.toggle('active', t.dataset.provider === 'grok')
+  );
+
+  document.querySelectorAll('.provider-panel').forEach(panel =>
+    panel.classList.toggle('active', panel.id === 'panel-grok')
+  );
+}
+
+function onModelChange() {
+  const val = document.getElementById('model-grok')?.value;
+  document.getElementById('model-grok-custom')?.classList.toggle('show', val === 'custom');
+}
+
+function getModel() {
+  const sel = document.getElementById('model-grok');
+  if (!sel) return 'grok-3-latest';
+
+  return sel.value === 'custom'
+    ? (document.getElementById('model-grok-custom')?.value || '').trim()
+    : sel.value;
+}
+
+// ─────────────────────────────
+// MOOD HANDLER
+// ─────────────────────────────
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const moodEl = document.getElementById('mood-value');
+    if (moodEl) moodEl.value = btn.dataset.mood;
+  });
+});
+
+// ─────────────────────────────
+// API CALL (SAFE + TIMEOUT)
+// ─────────────────────────────
+async function callAI(prompt) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const res = await fetch('/api/grok', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        model: getModel()
+      }),
+      signal: controller.signal
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Grok API error');
+    }
+
+    return data.text;
+
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Request timeout — backend slow or not responding');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+// ─────────────────────────────
+// MAIN FUNCTION (FIXED)
+// ─────────────────────────────
+async function generateStory() {
+
+  const city = getInputValue('city', 'ঢাকা');
+  const herCareer = getInputValue('her-career', 'ডিজাইনার');
+  const myCareer = getInputValue('my-career', 'ডেভেলপার');
+  const mood = getInputValue('mood-value', 'romantic');
+  const situation = getInputValue('situation', '');
+
+  const btn = document.getElementById('generate-btn');
+  const errorBox = document.getElementById('error-box');
+  const card = document.getElementById('story-card');
+  const output = document.getElementById('story-output');
+  const metaEl = document.getElementById('story-meta');
+
+  if (!btn || !output || !card) {
+    console.error('Missing UI elements');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'লেখা হচ্ছে…';
+
+  if (errorBox) errorBox.style.display = 'none';
+
+  card.style.display = 'block';
+  card.classList.remove('visible');
+
+  output.innerHTML = `
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+  `;
+
+  metaEl.innerHTML = '';
+
+  setTimeout(() => card.classList.add('visible'), 10);
+
+  const moodGuide = {
+    romantic: 'উষ্ণ, নরম, বাস্তব সম্পর্কের অনুভূতি',
+    rainy: 'শান্ত, আবেগপূর্ণ, ধীর',
+    playful: 'হালকা খুনসুটি, বাস্তব কৌতুক',
+    tense: 'দূরত্ব + চাপ, কিন্তু সম্পর্ক টিকে আছে'
+  };
+
+  const prompt = `
+তুমি একটি বাস্তবধর্মী বাংলা গল্প লিখবে।
+
+শহর: ${city}
+তার পেশা: ${herCareer}
+আমার পেশা: ${myCareer}
+মুড: ${mood} → ${moodGuide[mood]}
+পরিস্থিতি: ${situation || 'একটা সাধারণ সন্ধ্যা'}
+
+শর্ত:
+- 2–4 অনুচ্ছেদ
+- কোনো শিরোনাম না
+- নাটকীয় নয়, বাস্তব হবে
+- "তুমি" ব্যবহার করবে
+`;
+
+  try {
+    const storyRaw = await callAI(prompt);
+
+    const paragraphs = storyRaw
+      .split(/\n\n+/)
+      .filter(p => p.trim());
+
+    metaEl.innerHTML = `
+      <span class="meta-tag city">${city}</span>
+      <span class="meta-tag mood">${mood}</span>
+      <span class="meta-tag model">Grok · ${getModel()}</span>
+    `;
+
+    output.innerHTML = '';
+
+    await typewriter(output, paragraphs);
+
+  } catch (err) {
+    card.style.display = 'none';
+
+    if (errorBox) {
+      errorBox.style.display = 'block';
+      errorBox.textContent = 'Error: ' + err.message;
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'আমাদের মুহূর্ত লেখো';
+  }
+}
+
+// ─────────────────────────────
+// TYPEWRITER
+// ─────────────────────────────
+async function typewriter(container, paragraphs) {
+  for (const text of paragraphs) {
+    const p = document.createElement('p');
+    container.appendChild(p);
+    await typeText(p, text);
+  }
+}
+
+async function typeText(el, text) {
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  el.appendChild(cursor);
+
+  const words = text.split(/(\s+)/);
+
+  for (const w of words) {
+    cursor.insertAdjacentText('beforebegin', w);
+    await new Promise(r => setTimeout(r, 35));
+  }
+
+  cursor.remove();
+}
+
+</script>
+
+</body>
+</html>
